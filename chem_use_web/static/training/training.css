@@ -1,0 +1,181 @@
+.training-machine {
+  border: 1px solid rgba(85, 214, 190, 0.3);
+  border-radius: 8px;
+  background: rgba(85, 214, 190, 0.07);
+  color: #cde8e2;
+  padding: 11px 12px;
+  font-size: 12px;
+  line-height: 1.45;
+  margin-bottom: 15px;
+}
+
+.training-strategy {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.training-strategy label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  margin: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #0b1118;
+  color: var(--text);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.training-strategy input {
+  accent-color: var(--accent);
+}
+
+.training-guide {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+  margin: -4px 0 14px;
+}
+
+.training-prompt {
+  min-height: 150px;
+  font-size: 12px;
+}
+
+.training-plan {
+  margin: 14px 18px 0;
+  border: 1px solid rgba(85, 214, 190, 0.3);
+  border-radius: 8px;
+  background: rgba(11, 17, 24, 0.86);
+  padding: 14px;
+}
+
+.training-plan-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 13px;
+}
+
+.training-plan-head h3 {
+  margin: 0 0 5px;
+  font-size: 15px;
+}
+
+.training-plan-head p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.training-estimate-pill {
+  flex: 0 0 auto;
+  border-radius: 999px;
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.training-estimate-pill.ok {
+  border-color: rgba(91, 226, 141, 0.38);
+  color: var(--ok);
+}
+
+.training-estimate-pill.tight {
+  border-color: rgba(231, 180, 95, 0.45);
+  color: var(--accent-2);
+}
+
+.training-estimate-pill.too_large {
+  border-color: rgba(255, 107, 115, 0.45);
+  color: var(--danger);
+}
+
+.training-plan-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 13px;
+}
+
+.training-metric {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+  background: rgba(21, 26, 34, 0.7);
+}
+
+.training-metric span {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  margin-bottom: 5px;
+}
+
+.training-metric strong {
+  display: block;
+  color: var(--text);
+  font-size: 15px;
+}
+
+.training-plan h4 {
+  margin: 14px 0 8px;
+  font-size: 13px;
+}
+
+.training-list {
+  margin: 0;
+  padding-left: 18px;
+  color: #dbe4ee;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.training-code {
+  margin-top: 8px;
+  border-radius: 8px;
+  max-height: 280px;
+  white-space: pre-wrap;
+}
+
+.training-preview {
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin-top: 8px;
+}
+
+.training-preview table {
+  min-width: 620px;
+}
+
+.training-preview th,
+.training-preview td {
+  font-size: 12px;
+}
+
+@media (max-width: 1100px) {
+  .training-plan-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 680px) {
+  .training-plan-head {
+    flex-direction: column;
+  }
+
+  .training-plan-grid,
+  .training-strategy {
+    grid-template-columns: 1fr;
+  }
+}

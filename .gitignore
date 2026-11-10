@@ -1,0 +1,8 @@
+.DS_Store
+config.local.json
+cache/
+runs/
+models/
+.venv/
+__pycache__/
+*.pyc

@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Chemical Use Extractor</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+    <link rel="stylesheet" href="/static/training/training.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <div>
+          <h1>Chemical Use Extractor</h1>
+          <p id="modelLine">Loading local settings...</p>
+        </div>
+        <div class="status-strip">
+          <span id="modelStatus" class="pill">Model</span>
+          <span id="hardwareStatus" class="pill">Hardware</span>
+          <span id="oecdStatus" class="pill">OECD</span>
+        </div>
+      </header>
+
+      <section id="hardwareWarning" class="system-warning hidden"></section>
+
+      <section class="workspace">
+        <aside class="input-pane">
+          <div class="tabs" role="tablist">
+            <button id="textTab" class="tab active" type="button">Text</button>
+            <button id="fileTab" class="tab" type="button">File</button>
+            <button id="ragTab" class="tab" type="button">Use Search</button>
+            <button id="trainTab" class="tab" type="button">Train</button>
+          </div>
+
+          <form id="textForm" class="panel active-panel">
+            <label for="inputText">Input text</label>
+            <textarea id="inputText" maxlength="8000" placeholder="Paste one paragraph here"></textarea>
+            <div class="meter">
+              <span id="wordCount">0 / 500 words</span>
+              <span>Direct mode</span>
+            </div>
+            <button class="primary" type="submit">Run extraction</button>
+          </form>
+
+          <form id="fileForm" class="panel">
+            <label for="fileInput">Upload CSV or XLSX</label>
+            <input id="fileInput" name="file" type="file" accept=".csv,.tsv,.xlsx,.xls" />
+            <label for="columnSelect">Text column</label>
+            <select id="columnSelect">
+              <option value="">Auto detect</option>
+            </select>
+            <div class="meter">
+              <span>Recommended: less than 500 words per row</span>
+              <span>Limit: 100000 rows</span>
+            </div>
+            <button class="primary" type="submit">Run file</button>
+          </form>
+
+          <form id="ragForm" class="panel">
+            <label for="ragQuery">Search extracted uses</label>
+            <textarea id="ragQuery" class="search-box" placeholder="Example: compounds used as insect repellents"></textarea>
+            <button id="enrichRagResults" class="secondary hidden" type="button">GET chemical APIs</button>
+            <label for="ragTopK">Results</label>
+            <select id="ragTopK">
+              <option value="5">5</option>
+              <option value="10" selected>10</option>
+              <option value="20">20</option>
+              <option value="50">50</option>
+            </select>
+            <label for="ragSourceCsv">Knowledge file path</label>
+            <input id="ragSourceCsv" type="text" placeholder="the xlsx or csv path" />
+            <div class="field-grid">
+              <div>
+                <label for="ragOutputColumn">Prediction column</label>
+                <input id="ragOutputColumn" type="text" placeholder="model outputs" />
+              </div>
+              <div>
+                <label for="ragTextColumn">Evidence column</label>
+                <input id="ragTextColumn" type="text" placeholder="original paragraph" />
+              </div>
+            </div>
+            <label for="ragPathColumn">Source label column</label>
+            <input id="ragPathColumn" type="text" placeholder="Any column you want to show" />
+            <div id="ragStatusLine" class="inline-status hidden"></div>
+            <button class="primary" type="submit">Search uses</button>
+            <button id="askRagAnswer" class="secondary" type="button">Ask with RAG</button>
+            <button id="buildRagIndex" class="secondary" type="button">Build/update search index</button>
+          </form>
+
+          <form id="trainingForm" class="panel">
+            <div id="trainingMachine" class="training-machine">Loading machine information...</div>
+
+            <label>Strategy</label>
+            <div class="training-strategy" role="radiogroup" aria-label="Training strategy">
+              <label>
+                <input name="trainingStrategy" type="radio" value="lora" checked />
+                <span>LoRA</span>
+              </label>
+              <label>
+                <input name="trainingStrategy" type="radio" value="dpo" />
+                <span>DPO</span>
+              </label>
+            </div>
+
+            <label for="trainingModelLink">Base model</label>
+            <input
+              id="trainingModelLink"
+              type="text"
+              placeholder="https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct"
+            />
+
+            <div class="field-grid">
+              <div>
+                <label for="trainingModelSize">Model size, B</label>
+                <input id="trainingModelSize" type="number" min="0.1" step="0.1" value="8" />
+              </div>
+              <div>
+                <label for="trainingLearningRate">Learning rate</label>
+                <input id="trainingLearningRate" type="text" value="0.0002" />
+              </div>
+            </div>
+
+            <div class="field-grid">
+              <div>
+                <label for="trainingEpochs">Epochs</label>
+                <input id="trainingEpochs" type="number" min="0.1" step="0.1" value="3" />
+              </div>
+              <div>
+                <label for="trainingSeqLength">Max sequence</label>
+                <input id="trainingSeqLength" type="number" min="128" step="128" value="2048" />
+              </div>
+            </div>
+
+            <div class="field-grid">
+              <div>
+                <label for="trainingBatchSize">Batch size</label>
+                <input id="trainingBatchSize" type="number" min="1" step="1" value="1" />
+              </div>
+              <div>
+                <label for="trainingGradAccum">Grad accumulation</label>
+                <input id="trainingGradAccum" type="number" min="1" step="1" value="8" />
+              </div>
+            </div>
+
+            <div class="field-grid">
+              <div>
+                <label for="trainingLoraRank">LoRA rank</label>
+                <input id="trainingLoraRank" type="number" min="1" step="1" value="16" />
+              </div>
+              <div>
+                <label for="trainingLoraAlpha">LoRA alpha</label>
+                <input id="trainingLoraAlpha" type="number" min="1" step="1" value="32" />
+              </div>
+            </div>
+
+            <div class="field-grid">
+              <div>
+                <label for="trainingLoraDropout">LoRA dropout</label>
+                <input id="trainingLoraDropout" type="number" min="0" max="1" step="0.01" value="0.05" />
+              </div>
+              <div>
+                <label for="trainingDpoBeta">DPO beta</label>
+                <input id="trainingDpoBeta" type="number" min="0.001" step="0.001" value="0.1" />
+              </div>
+            </div>
+
+            <label class="check">
+              <input id="trainingLoad4Bit" type="checkbox" checked />
+              <span>Use 4-bit loading when supported</span>
+            </label>
+            <label class="check">
+              <input id="trainingCheckpointing" type="checkbox" checked />
+              <span>Use gradient checkpointing</span>
+            </label>
+
+            <label for="trainingDataPath">Training data file path</label>
+            <input id="trainingDataPath" type="text" placeholder="data/cue_training.csv" />
+            <div class="training-guide">
+              LoRA data needs input and output columns. DPO data needs prompt, chosen, and rejected columns.
+              CSV, TSV, XLSX, JSONL, and JSON are supported for planning.
+            </div>
+
+            <div class="field-grid lora-columns">
+              <div>
+                <label for="trainingInputColumn">Input column</label>
+                <input id="trainingInputColumn" type="text" value="paragraph" />
+              </div>
+              <div>
+                <label for="trainingOutputColumn">Output column</label>
+                <input id="trainingOutputColumn" type="text" value="model outputs" />
+              </div>
+            </div>
+
+            <div class="dpo-columns hidden">
+              <label for="trainingPromptColumn">Prompt column</label>
+              <input id="trainingPromptColumn" type="text" value="prompt" />
+              <div class="field-grid">
+                <div>
+                  <label for="trainingChosenColumn">Chosen column</label>
+                  <input id="trainingChosenColumn" type="text" value="chosen" />
+                </div>
+                <div>
+                  <label for="trainingRejectedColumn">Rejected column</label>
+                  <input id="trainingRejectedColumn" type="text" value="rejected" />
+                </div>
+              </div>
+            </div>
+
+            <label for="trainingPromptTemplate">Prompt template</label>
+            <textarea id="trainingPromptTemplate" class="training-prompt">Extract chemical-use pairs from the paragraph.
+
+Paragraph:
+{input}
+
+Return a JSON object such as {"Water": "solvent | cleaning agent"}.</textarea>
+            <div class="training-guide">Keep it direct. Use {input} where the row text should be inserted.</div>
+
+            <div id="trainingStatusLine" class="inline-status hidden"></div>
+            <button class="primary" type="submit">Estimate training</button>
+          </form>
+
+          <section class="options">
+            <label class="check">
+              <input id="enrichChemicals" type="checkbox" checked />
+              <span>Chemical database links</span>
+            </label>
+            <label class="check">
+              <input id="enableOecd" type="checkbox" />
+              <span>OECD labels with local gpt-oss-20b</span>
+            </label>
+            <button id="downloadModel" class="secondary" type="button">Download Llama-CUE model</button>
+            <div id="modelDownloadProgress" class="download-progress hidden">
+              <div class="progress-head">
+                <span id="modelDownloadText">Preparing download</span>
+              </div>
+              <div class="progress-track" role="progressbar" aria-label="Model download progress">
+                <div id="modelDownloadBar" class="progress-bar"></div>
+              </div>
+            </div>
+            <button id="downloadOecd" class="secondary" type="button">Download OECD model</button>
+            <div id="oecdFeedback" class="inline-status hidden"></div>
+          </section>
+        </aside>
+
+        <section class="results-pane">
+          <div class="result-header">
+            <div>
+              <h2>Results</h2>
+              <p id="summaryLine">No run yet.</p>
+            </div>
+            <div id="downloadLinks" class="downloads"></div>
+          </div>
+
+          <div id="message" class="message hidden"></div>
+          <div id="ragAnswerBox" class="rag-answer hidden"></div>
+          <div id="trainingPlanBox" class="training-plan hidden"></div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Row</th>
+                  <th>Status</th>
+                  <th>Chemical</th>
+                  <th>Use</th>
+                  <th>OECD</th>
+                  <th>Identifiers</th>
+                  <th>Links</th>
+                </tr>
+              </thead>
+              <tbody id="resultsBody">
+                <tr>
+                  <td colspan="7" class="empty">Results will appear here.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
+      <section id="developerPanel" class="developer hidden">
+        <div class="developer-head">
+          <h2>Developer</h2>
+          <label class="check">
+            <input id="includeDebug" type="checkbox" />
+            <span>Include raw model output</span>
+          </label>
+        </div>
+        <pre id="debugOutput">{}</pre>
+      </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+    <script src="/static/training/training.js"></script>
+  </body>
+</html>
