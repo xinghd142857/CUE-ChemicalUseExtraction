@@ -9,7 +9,7 @@ optionally add OECD functional-use labels and chemical database identifiers.
 ### Windows Release
 
 Windows users can download
-[Chemical Use Extractor v1.1](https://github.com/xinghd142857/CUE-chem_use_extractor/releases/download/v1.1/Chemical.Use.Extractor.v1.1.exe).
+[Chemical Use Extractor v1.0](https://github.com/xinghd142857/CUE-ChemicalUseExtraction/releases/download/v1.0/Chemical.Use.Extractor.v1.0.exe).
 
 > **Important:** Before opening `Chemical.Use.Extractor.exe`, place it in the
 > folder where you want CUE to store its downloaded models and runtime files.
